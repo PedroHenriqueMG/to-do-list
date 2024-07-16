@@ -18,4 +18,8 @@ export class TasksController {
 
     res.json(createTask);
   }
+
+  async getAll(req: Request, res: Response) {
+    await res.json(tasks);
+  }
 }
