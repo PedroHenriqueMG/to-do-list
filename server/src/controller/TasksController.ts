@@ -17,7 +17,7 @@ export class TasksController {
 
     tasks.push(createTask);
 
-    res.json(createTask);
+    res.status(201).json(createTask);
   }
 
   getAll(req: Request, res: Response) {
