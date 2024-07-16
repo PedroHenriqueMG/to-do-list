@@ -11,7 +11,7 @@ export const router = Router();
 router.use("/docs", swaggerUi.serve);
 router.get("/docs", swaggerUi.setup(document));
 
-router.post("/tasks", validate(tasksBody), new TasksController().create);
-router.get("/tasks", new TasksController().getAll);
-router.put("/tasks/:id", validate(tasksBody), new TasksController().update);
+router.post("/tasks", validate(tasksBody), new TasksController().post);
+router.get("/tasks", new TasksController().get);
+router.put("/tasks/:id", validate(tasksBody), new TasksController().put);
 router.delete("/tasks/:id", new TasksController().delete);

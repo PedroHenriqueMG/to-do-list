@@ -1,49 +1,49 @@
-import { Request, Response } from "express";
-import { TasksProps } from "../@types/tasksSchema";
 import { randomUUID } from "crypto";
+import { Request, Response } from "express";
 import { NotFoundError } from "../helpers/api-errors";
-
-const tasks: TasksProps[] = [];
+import { TasksRepository } from "../repository/taskRepository";
 
 export class TasksController {
-  create(req: Request, res: Response) {
+  post(req: Request, res: Response) {
     const { title, task } = req.body;
 
-    const createTask = {
+    const createTask = TasksRepository.create({
       id: randomUUID(),
       title,
       task,
-    };
-
-    tasks.push(createTask);
+    });
 
     res.status(201).json(createTask);
   }
 
-  getAll(req: Request, res: Response) {
-    res.json(tasks);
+  get(req: Request, res: Response) {
+    const allTasks = TasksRepository.findAll();
+
+    res.json(allTasks);
   }
 
-  update(req: Request, res: Response) {
+  put(req: Request, res: Response) {
     const { id } = req.params;
     const { title, task } = req.body;
-    const taskIndex = tasks.findIndex((t) => t.id === id);
-    if (taskIndex === -1) {
+    const taskFound = TasksRepository.findById(id);
+
+    if (!taskFound) {
       throw new NotFoundError("Tarefa não encontrada");
     }
-    const updatedUser = { id, title, task };
-    tasks[taskIndex] = updatedUser;
-    res.json(updatedUser);
+
+    const updatedTask = TasksRepository.update({ id, title, task });
+    res.json(updatedTask);
   }
 
   delete(req: Request, res: Response) {
     const { id } = req.params;
-    const userIndex = tasks.findIndex((t) => t.id === id);
-    if (userIndex === -1) {
+    const taskFound = TasksRepository.findById(id);
+
+    if (!taskFound) {
       throw new NotFoundError("Tarefa não encontrada");
     }
-    tasks.splice(userIndex, 1);
 
+    TasksRepository.delete(id);
     res.status(204).send();
   }
 }

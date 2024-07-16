@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { createDocument, extendZodWithOpenApi } from "zod-openapi";
+import { createDocument } from "zod-openapi";
 import { tasksBody, tasksGetAll, tasksSchema } from "../@types/tasksSchema";
 
 export const document = createDocument({
@@ -42,7 +41,7 @@ export const document = createDocument({
         },
       },
     },
-    "/tasks/:id": {
+    "/tasks/{id}": {
       put: {
         tags: ["Tasks"],
         requestBody: {
