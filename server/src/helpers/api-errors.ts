@@ -6,8 +6,8 @@ export class ApiError extends Error {
   }
 }
 
-export class BadRequestError extends ApiError {
+export class NotFoundError extends ApiError {
   constructor(message: string) {
-    super(message, 400);
+    super(message, 404);
   }
 }
