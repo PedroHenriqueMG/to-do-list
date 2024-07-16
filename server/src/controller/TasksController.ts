@@ -27,12 +27,23 @@ export class TasksController {
   update(req: Request, res: Response) {
     const { id } = req.params;
     const { title, task } = req.body;
-    const taskIndex = tasks.findIndex((u) => u.id === id);
+    const taskIndex = tasks.findIndex((t) => t.id === id);
     if (taskIndex === -1) {
       throw new NotFoundError("Tarefa não encontrada");
     }
     const updatedUser = { id, title, task };
     tasks[taskIndex] = updatedUser;
     res.json(updatedUser);
+  }
+
+  delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const userIndex = tasks.findIndex((t) => t.id === id);
+    if (userIndex === -1) {
+      throw new NotFoundError("Tarefa não encontrada");
+    }
+    tasks.splice(userIndex, 1);
+
+    res.status(204).send();
   }
 }

@@ -8,3 +8,4 @@ export const router = Router();
 router.post("/tasks", validate(tasksBody), new TasksController().create);
 router.get("/tasks", new TasksController().getAll);
 router.put("/tasks/:id", validate(tasksBody), new TasksController().update);
+router.delete("/tasks/:id", new TasksController().delete);
