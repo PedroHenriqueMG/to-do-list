@@ -1,10 +1,10 @@
-import { Button } from "./components/ui/button";
+import { TasksTable } from "./components/taskTable/taskTable";
 
 export default function App() {
   return (
-    <section>
+    <section className="flex flex-col items-center">
       <h1 className="text-3xl font-bold underline">Home</h1>
-      <Button>tetse</Button>
+      <TasksTable />
     </section>
   );
 }
