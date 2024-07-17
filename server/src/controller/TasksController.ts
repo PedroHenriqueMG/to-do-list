@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomInt } from "crypto";
 import { Request, Response } from "express";
 import { NotFoundError } from "../helpers/api-errors";
 import { TasksRepository } from "../repository/taskRepository";
@@ -8,7 +8,7 @@ export class TasksController {
     const { title, task } = req.body;
 
     const createTask = TasksRepository.create({
-      id: randomUUID(),
+      id: randomInt(100),
       title,
       task,
     });
@@ -23,8 +23,10 @@ export class TasksController {
   }
 
   put(req: Request, res: Response) {
-    const { id } = req.params;
+    const { ids } = req.params;
     const { title, task } = req.body;
+    const id = parseInt(ids);
+
     const taskFound = TasksRepository.findById(id);
 
     if (!taskFound) {
@@ -36,7 +38,9 @@ export class TasksController {
   }
 
   delete(req: Request, res: Response) {
-    const { id } = req.params;
+    const { ids } = req.params;
+    const id = parseInt(ids);
+
     const taskFound = TasksRepository.findById(id);
 
     if (!taskFound) {

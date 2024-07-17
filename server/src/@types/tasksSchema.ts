@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const tasksSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   title: z.string(),
   task: z.string(),
 });
