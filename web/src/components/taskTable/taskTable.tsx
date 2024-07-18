@@ -16,6 +16,7 @@ import type {
 } from "@tanstack/react-table";
 
 import { deleteTask, getAllTasks } from "@/src/api/tasks.service";
+import { MenuIcon } from "@/src/assets/menu";
 import { Button } from "@/src/components/ui/button";
 import {
   Table,
@@ -26,12 +27,13 @@ import {
   TableRow,
 } from "@/src/components/ui/table";
 import { FormTask } from "../formTask/formTask";
+import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "../ui/dialog";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export type Payment = {
   id: number;
@@ -39,51 +41,11 @@ export type Payment = {
   task: string;
 };
 
-async function handleDelete(id: number) {
-  await deleteTask(id);
-}
-
-export const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: "id",
-    header: "Id",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "title",
-    header: "Titulo",
-    cell: ({ row }) => <div className="lowercase">{row.getValue("title")}</div>,
-  },
-  {
-    accessorKey: "task",
-    header: "Tarefa",
-    cell: ({ row }) => <div className="lowercase">{row.getValue("task")}</div>,
-  },
-  {
-    header: "Opções",
-    cell: ({ row }) => (
-      <div className="capitalize">
-        <Dialog>
-          <DialogTrigger>Editar</DialogTrigger>
-          <DialogContent className="w-full">
-            <DialogHeader></DialogHeader>
-            <FormTask
-              id={row.getValue("id")}
-              task={row.getValue("task")}
-              title={row.getValue("title")}
-            />
-          </DialogContent>
-        </Dialog>
-        <Button onClick={() => handleDelete(row.getValue("id"))}>
-          Deletar
-        </Button>
-      </div>
-    ),
-  },
-];
-
 export function TasksTable() {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = React.useState<Payment | undefined>(
+    undefined
+  );
   const [data, setData] = React.useState<Payment[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -99,7 +61,60 @@ export function TasksTable() {
       setData(response);
     }
     fetchData();
-  }, [data]);
+  }, []);
+
+  async function handleDelete(id: number) {
+    await deleteTask(id);
+    window.location.reload();
+  }
+
+  function handleModalOpen(payment?: Payment) {
+    setSelectedItem(payment);
+    setIsOpen(true);
+    return;
+  }
+
+  const columns: ColumnDef<Payment>[] = [
+    {
+      accessorKey: "id",
+      header: "Id",
+      cell: ({ row }) => <div className="capitalize">{row.getValue("id")}</div>,
+    },
+    {
+      accessorKey: "title",
+      header: "Titulo",
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("title")}</div>
+      ),
+    },
+    {
+      accessorKey: "task",
+      header: "Tarefa",
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("task")}</div>
+      ),
+    },
+    {
+      header: "Opções",
+      cell: ({ row }) => (
+        <div className="capitalize">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <MenuIcon />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-40 flex justify-between">
+              <Button onClick={() => handleModalOpen(row.original)}>
+                Editar
+              </Button>
+              <Button onClick={() => handleDelete(row.getValue("id"))}>
+                Deletar
+              </Button>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -124,7 +139,7 @@ export function TasksTable() {
     <>
       <div className="w-[90%]">
         <div className="flex items-center py-4">
-          <Button onClick={() => setIsOpen(true)}>Adicionar</Button>
+          <Button onClick={() => handleModalOpen()}>Adicionar</Button>
         </div>
         <div className="rounded-md border">
           <Table>
@@ -199,8 +214,10 @@ export function TasksTable() {
       </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-full">
-          <DialogHeader></DialogHeader>
-          <FormTask />
+          <DialogHeader>
+            <DialogTitle>Formulario</DialogTitle>
+          </DialogHeader>
+          <FormTask payment={selectedItem} />
         </DialogContent>
       </Dialog>
     </>
