@@ -1,24 +1,34 @@
-import { createTask } from "@/src/api/tasks.service";
+import { createTask, updateTask } from "@/src/api/tasks.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { TaskProps, taskSchema } from "./schema";
+import { TaskFormProps, TaskProps, taskForm } from "./schema";
 
-export function FormTask() {
+export function FormTask({ id, task, title }: TaskProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TaskProps>({
+  } = useForm<TaskFormProps>({
     mode: "onBlur",
     criteriaMode: "all",
-    resolver: zodResolver(taskSchema),
+    resolver: zodResolver(taskForm),
+    defaultValues: {
+      task: task,
+      title: title,
+    },
   });
 
-  async function handleCreate(data: TaskProps) {
-    const request = await createTask(data.title, data.task);
-    console.log(request);
+  async function handleCreate(data: TaskFormProps) {
+    if (id) {
+      console.log("update");
+      await updateTask(id, data.task, data.title);
+      return;
+    }
+    console.log("create");
+    await createTask(data.title, data.task);
+    return;
   }
 
   return (

@@ -13,15 +13,15 @@ export const getAllTasks = async () => {
   return response.data;
 };
 
-export const updateTask = async (id: number, title: string, taks: string) => {
+export const updateTask = async (id: number, title: string, task: string) => {
   const response = await api.put(`/tasks/${id}`, {
     title,
-    taks,
+    task,
   });
   return response.data;
 };
 
 export const deleteTask = async (id: number) => {
-  const response = await api.put(`/tasks/${id}`);
+  const response = await api.delete(`/tasks/${id}`);
   return response.data;
 };
