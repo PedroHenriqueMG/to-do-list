@@ -24,14 +24,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-
-const data: Payment[] = [
-  {
-    id: 1,
-    title: "Teste1",
-    task: "testar",
-  },
-];
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { getAllTasks } from "@/src/api/tasks.service";
+import { FormTask } from "../formTask/formTask";
 
 export type Payment = {
   id: number;
@@ -67,6 +68,7 @@ export const columns: ColumnDef<Payment>[] = [
 ];
 
 export function TasksTable() {
+  const [data, setData] = React.useState<Payment[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -74,6 +76,14 @@ export function TasksTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const response = await getAllTasks();
+      setData(response);
+    }
+    fetchData();
+  }, [data]);
 
   const table = useReactTable({
     data,
@@ -97,7 +107,17 @@ export function TasksTable() {
   return (
     <div className="w-[90%]">
       <div className="flex items-center py-4">
-        <Button>Adicionar</Button>
+        <AlertDialog>
+          <AlertDialogTrigger>Adicionar</AlertDialogTrigger>
+          <AlertDialogContent className="w-full">
+            <AlertDialogHeader>
+              <AlertDialogCancel className="rounded-full w-4 h-4">
+                X
+              </AlertDialogCancel>
+            </AlertDialogHeader>
+            <FormTask />
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <div className="rounded-md border">
         <Table>
