@@ -1,9 +1,9 @@
 import { api } from "../service/api";
 
-export const createTask = async (title: string, taks: string) => {
+export const createTask = async (title: string, task: string) => {
   const response = await api.post("/tasks", {
     title,
-    taks,
+    task,
   });
   return response.data;
 };
